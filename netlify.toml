@@ -1,0 +1,12 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/cadastro"
+  to = "/auth.html"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/auth.html"
+  status = 200
