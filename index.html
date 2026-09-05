@@ -1,120 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Driver</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-        
-        section {
-            margin-bottom: 3rem;
-        }
-        
-        h2 {
-            color: #667eea;
-            margin-bottom: 1rem;
-            font-size: 2rem;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 1.5rem;
-        }
-        
-        .feature-card {
-            background: #f5f5f5;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .feature-card h3 {
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-        
-        footer {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>King Driver Demo</title>
+<style>
+:root{--bg:#080808;--panel:#121212;--panel2:#1a1a1a;--gold:#d4af37;--gold2:#f0cf62;--text:#fff;--muted:#aaa;--green:#35d07f;--red:#ff5b5b}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top,#201b0b 0,#080808 42%);color:var(--text);min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}.app{max-width:480px;margin:auto;min-height:100vh;padding-bottom:30px}.top{padding:24px 20px 16px;text-align:center}.crown{font-size:42px}.brand{font-size:29px;font-weight:900;letter-spacing:2px}.brand span{color:var(--gold)}.slogan{color:var(--muted);font-size:13px}.screen{padding:0 18px}.hero{background:linear-gradient(145deg,#17140b,#101010);border:1px solid #3a3117;border-radius:22px;padding:22px;margin:8px 0 16px;box-shadow:0 15px 40px #0008}.hero h1{margin:0 0 7px;font-size:25px}.hero p{color:var(--muted);margin:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{background:var(--panel);border:1px solid #292929;border-radius:18px;padding:16px}.card strong{display:block;margin-bottom:6px}.muted{color:var(--muted);font-size:13px}.btn{width:100%;border:0;border-radius:14px;padding:14px 16px;font-weight:800;margin-top:10px}.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#090909}.dark{background:#222;color:#fff;border:1px solid #383838}.danger{background:#3a1717;color:#ff8585}.back{background:none;border:0;color:var(--gold);padding:8px 0;font-weight:700}.field{margin:10px 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.field input,.field select{width:100%;padding:13px;border-radius:12px;border:1px solid #333;background:#0e0e0e;color:#fff;outline:none}.field input:focus,.field select:focus{border-color:var(--gold)}.price{font-size:30px;font-weight:900;color:var(--gold)}.status{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:99px;background:#123021;color:#63e69b;font-size:12px;font-weight:800}.dot{width:8px;height:8px;border-radius:50%;background:var(--green)}.map{height:210px;border-radius:18px;border:1px solid #302a18;background:linear-gradient(135deg,#16140f,#0e0e0e);position:relative;overflow:hidden;margin:12px 0}.road{position:absolute;height:2px;background:#51482c;transform:rotate(-18deg);width:140%;left:-20%;top:48%}.road.r2{transform:rotate(35deg);top:65%}.pin{position:absolute;left:52%;top:43%;font-size:34px}.car{position:absolute;left:72%;top:28%;font-size:27px}.nav{position:sticky;bottom:10px;margin:18px 10px 0;padding:8px;background:#151515ee;border:1px solid #333;border-radius:17px;display:flex;gap:5px;backdrop-filter:blur(10px)}.nav button{flex:1;background:none;border:0;color:#aaa;padding:9px 4px;font-size:11px}.nav button.active{color:var(--gold)}.stat{font-size:26px;font-weight:900}.list{display:flex;flex-direction:column;gap:10px}.row{display:flex;justify-content:space-between;align-items:center;background:#151515;border:1px solid #292929;padding:13px;border-radius:14px}.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#fff;color:#111;padding:12px 17px;border-radius:12px;font-weight:700;box-shadow:0 10px 30px #0009;z-index:5;display:none}.rating{color:var(--gold);font-size:24px;letter-spacing:3px}.small{font-size:11px;color:#777}.logoLine{display:flex;align-items:center;justify-content:center;gap:8px}.check{color:var(--green);font-weight:900}.hidden{display:none!important}@media(min-width:700px){body{padding:25px}.app{border:1px solid #252525;border-radius:28px;box-shadow:0 20px 70px #000}.top{padding-top:30px}}
+</style>
 </head>
 <body>
-    <header>
-        <h1>🚗 King Driver</h1>
-        <p class="subtitle">Seu aplicativo de transporte confiável e seguro</p>
-    </header>
-    
-    <main>
-        <section>
-            <h2>Bem-vindo</h2>
-            <p>King Driver é uma plataforma moderna de transporte que conecta passageiros e motoristas de forma rápida, segura e eficiente.</p>
-        </section>
-        
-        <section>
-            <h2>Funcionalidades</h2>
-            <div class="features">
-                <div class="feature-card">
-                    <h3>🗺️ Localização em Tempo Real</h3>
-                    <p>Rastreie sua corrida em tempo real com mapas interativos.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>🔒 Segurança Garantida</h3>
-                    <p>Motoristas e passageiros verificados para sua tranquilidade.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>💳 Pagamento Fácil</h3>
-                    <p>Múltiplas formas de pagamento seguro e rápido.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>⭐ Avaliações Confiáveis</h3>
-                    <p>Sistema de classificação transparente e confiável.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-    
-    <footer>
-        <p>&copy; 2026 King Driver. Todos os direitos reservados.</p>
-    </footer>
+<div class="app">
+<header class="top"><div class="logoLine"><div class="crown">♛</div><div class="brand">KING <span>DRIVER</span></div></div><div class="slogan">Seu destino, nosso compromisso.</div></header>
+<main id="app" class="screen"></main>
+<div id="toast" class="toast"></div>
+</div>
+<script>
+const state={role:null,view:'home',origin:'São Sebastião do Paraíso, MG',destination:'',category:'Econômico',price:18.50,rideStatus:'idle',driverOnline:false,rides:0,earnings:0};
+const app=document.getElementById('app');
+function money(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function toast(t){const x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2200)}
+function setView(v){state.view=v;render()}
+function home(){return `<section class="hero"><h1>Bem-vindo ao King Driver 👑</h1><p>Escolha um ambiente para testar o aplicativo.</p><div class="grid" style="margin-top:16px"><button class="btn gold" onclick="choose('passenger')">🚗 Passageiro</button><button class="btn dark" onclick="choose('driver')">🧑‍✈️ Motorista</button></div><button class="btn dark" onclick="choose('admin')">📊 Painel do proprietário</button></section><div class="grid"><div class="card"><strong>🔒 Segurança</strong><span class="muted">Viagens acompanhadas e avaliações.</span></div><div class="card"><strong>💳 Pagamento</strong><span class="muted">Preço e corrida demonstrativos.</span></div><div class="card"><strong>📍 Localização</strong><span class="muted">Fluxo preparado para mapas reais.</span></div><div class="card"><strong>⭐ Avaliação</strong><span class="muted">Passageiro e motorista avaliam.</span></div></div>`}
+function choose(r){state.role=r;state.view=r==='passenger'?'passenger':r==='driver'?'driver':'admin';render()}
+function passenger(){if(state.rideStatus==='requested'||state.rideStatus==='accepted'||state.rideStatus==='started')return rideTracking();return `<button class="back" onclick="setView('home')">← Voltar</button><section class="hero"><h1>Solicitar corrida</h1><p>Informe origem e destino para simular uma solicitação.</p><div class="field"><label>📍 Origem</label><input id="origin" value="${state.origin}" oninput="state.origin=this.value"></div><div class="field"><label>🏁 Destino</label><input id="dest" placeholder="Ex.: Praça da Matriz" value="${state.destination}" oninput="state.destination=this.value"></div><div class="field"><label>🚘 Categoria</label><select onchange="state.category=this.value;estimate()"><option ${state.category==='Econômico'?'selected':''}>Econômico</option><option ${state.category==='Conforto'?'selected':''}>Conforto</option><option ${state.category==='Premium'?'selected':''}>Premium</option></select></div><div class="card"><span class="muted">Estimativa</span><div id="price" class="price">${money(state.price)}</div><span class="small">Valor demonstrativo — não é cobrança real.</span></div><button class="btn gold" onclick="requestRide()">Solicitar corrida</button></section>`}
+function estimate(){const m={Econômico:1,Conforto:1.35,Premium:1.8};state.price=18.5*m[state.category];const p=document.getElementById('price');if(p)p.textContent=money(state.price)}
+function requestRide(){if(!state.destination){toast('Informe o destino.');return}state.rideStatus='requested';state.rides++;toast('Corrida solicitada! Procurando motorista...');render();setTimeout(()=>{if(state.rideStatus==='requested'){state.rideStatus='accepted';toast('Motorista encontrado!');render()}},1800)}
+function rideTracking(){const accepted=state.rideStatus==='accepted',started=state.rideStatus==='started';return `<button class="back" onclick="cancelRide()">← Cancelar</button><section class="hero"><span class="status"><span class="dot"></span>${started?'Corrida em andamento':accepted?'Motorista a caminho':'Procurando motorista'}</span><h1 style="margin-top:14px">${started?'Você está em viagem':accepted?'Motorista encontrado':'Encontrando o melhor motorista'}</h1><p>${state.origin} → ${state.destination}</p><div class="map"><div class="road"></div><div class="road r2"></div><div class="pin">📍</div><div class="car">🚗</div></div><div class="row"><div><span class="muted">Motorista</span><br><strong>João Silva</strong><br><span class="rating">★★★★★</span></div><div style="text-align:right"><span class="muted">Estimativa</span><br><strong>${money(state.price)}</strong></div></div>${accepted?'<button class="btn gold" onclick="startRide()">Motorista chegou — iniciar corrida</button>':''}${started?'<button class="btn gold" onclick="finishRide()">Finalizar corrida</button>':''}</section>`}
+function startRide(){state.rideStatus='started';toast('Corrida iniciada. Boa viagem!');render()}
+function finishRide(){state.rideStatus='idle';state.earnings+=state.price;state.view='rating';toast('Corrida concluída!');render()}
+function cancelRide(){state.rideStatus='idle';toast('Corrida cancelada.');render()}
+function rating(){return `<section class="hero" style="text-align:center"><div class="crown">♛</div><h1>Corrida concluída</h1><p>Como foi sua experiência?</p><div class="rating" style="margin:20px">★★★★★</div><button class="btn gold" onclick="state.view='passenger';render();toast('Obrigado pela avaliação!')">Enviar avaliação</button></section>`}
+function driver(){return `<button class="back" onclick="setView('home')">← Voltar</button><section class="hero"><span class="status" style="background:${state.driverOnline?'#123021':'#2a1919'};color:${state.driverOnline?'#63e69b':'#ff8585'}"><span class="dot" style="background:${state.driverOnline?'var(--green)':'var(--red)'}"></span>${state.driverOnline?'ONLINE':'OFFLINE'}</span><h1 style="margin-top:14px">Área do motorista</h1><p>Receba solicitações e acompanhe seus ganhos.</p><button class="btn ${state.driverOnline?'danger':'gold'}" onclick="state.driverOnline=!state.driverOnline;render()">${state.driverOnline?'Ficar offline':'Ficar online'}</button></section>${state.driverOnline?driverRequest():`<div class="card"><strong>Fique online</strong><p class="muted">Quando estiver online, novas solicitações aparecerão aqui.</p></div>`}<div class="grid" style="margin-top:12px"><div class="card"><span class="muted">Corridas</span><div class="stat">${state.rides}</div></div><div class="card"><span class="muted">Ganhos</span><div class="stat">${money(state.earnings)}</div></div></div>`}
+function driverRequest(){return `<div class="card"><strong>🔔 Nova solicitação</strong><p class="muted">Passageiro: Carlos • 2,4 km</p><p>📍 Centro → Bairro Industrial</p><div class="price" style="font-size:24px">R$ 22,40</div><div class="grid"><button class="btn dark" onclick="toast('Solicitação recusada')">Recusar</button><button class="btn gold" onclick="toast('Corrida aceita!')">Aceitar</button></div></div>`}
+function admin(){return `<button class="back" onclick="setView('home')">← Voltar</button><section class="hero"><h1>👑 Painel King Driver</h1><p>Visão demonstrativa da operação.</p></section><div class="grid"><div class="card"><span class="muted">Corridas</span><div class="stat">${state.rides}</div></div><div class="card"><span class="muted">Motoristas online</span><div class="stat">${state.driverOnline?'1':'0'}</div></div><div class="card"><span class="muted">Faturamento demo</span><div class="stat">${money(state.earnings)}</div></div><div class="card"><span class="muted">Avaliação</span><div class="stat">4,9 ⭐</div></div></div><div class="card" style="margin-top:12px"><strong>Operação</strong><div class="list" style="margin-top:10px"><div class="row"><span>🧑‍✈️ Motoristas</span><b class="check">Ativo</b></div><div class="row"><span>👥 Passageiros</span><b class="check">Ativo</b></div><div class="row"><span>🚗 Corridas</span><b class="check">Monitorando</b></div><div class="row"><span>💳 Pagamentos</span><b>Demo</b></div><div class="row"><span>🛟 Suporte</span><b class="check">24h</b></div></div></div>`}
+function render(){let html=state.view==='home'?home():state.view==='passenger'?passenger():state.view==='driver'?driver():state.view==='admin'?admin():rating();app.innerHTML=html;if(state.role)app.innerHTML+=`<div class="nav"><button class="active" onclick="setView('${state.role}')">⌂ Início</button><button onclick="toast('Mapa demonstrativo')">⌖ Mapa</button><button onclick="toast('Histórico demonstrativo')">▤ Histórico</button><button onclick="setView('home')">⚙ Sair</button></div>`}
+render();
+</script>
 </body>
 </html>
