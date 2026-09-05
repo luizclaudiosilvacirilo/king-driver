@@ -4,7 +4,7 @@ Plataforma de mobilidade urbana em desenvolvimento, com experiência separada pa
 
 ## Estado atual
 
-A demo web continua preservada, mas o repositório agora também contém a primeira camada da estrutura real do produto: schema PostgreSQL/Supabase versionado, autenticação por perfis, RLS, ciclo de vida de corridas, ofertas, localização, pagamentos, avaliações e um endpoint inicial de saúde da API.
+A demo web continua preservada, e a interface principal já está preparada para usar o backend Supabase configurado no projeto: autenticação, perfis, solicitação/aceite de corridas, presença do motorista e atualização de localização.
 
 ## Estrutura principal
 
@@ -25,14 +25,16 @@ king-driver/
 │       ├── 001_profiles.sql
 │       ├── 002_core_tables.sql
 │       ├── 002_profile_auth_trigger_and_permissions.sql
-│       └── 003_secure_ride_actions.sql
+│       ├── 003_secure_ride_actions.sql
+│       ├── 004_runtime_realtime_and_driver_presence.sql
+│       └── 005_driver_ride_visibility_and_approval.sql
 ├── auth.html
 ├── index.html
 ├── vercel.json
 └── .env.example
 ```
 
-## Banco de dados real
+## Banco de dados
 
 O schema inclui:
 
@@ -41,7 +43,7 @@ O schema inclui:
 - `vehicles` — veículos cadastrados.
 - `rides` — corridas e ciclo de vida.
 - `ride_offers` — ofertas para motoristas.
-- `driver_locations` — última posição do motorista.
+- `driver_locations` — última posição e presença online do motorista.
 - `ride_events` — histórico de eventos.
 - `payments` — estado financeiro da corrida.
 - `ratings` — avaliações entre participantes.
@@ -57,6 +59,17 @@ requested → searching → accepted → arriving → in_progress → completed
 
 Também existem estados para `expired` e `disputed`.
 
+## Fluxo atual da interface
+
+- Cadastro e login com Supabase Auth.
+- Perfil de passageiro ou motorista.
+- Passageiro cria corrida com origem, destino, categoria e valor ofertado.
+- Motorista aprovado pode ficar online e descobrir corridas solicitadas.
+- Aceite de corrida protegido por função SQL.
+- Motorista avança a corrida por `arriving`, `in_progress` e `completed`.
+- Passageiro pode cancelar nos estados permitidos.
+- Localização do motorista é atualizada pelo GPS do dispositivo quando disponível.
+
 ## API
 
 `api/health.js` fornece o primeiro endpoint de saúde para o backend hospedado. Os próximos endpoints serão adicionados por domínio, mantendo credenciais privadas exclusivamente no ambiente do servidor.
@@ -68,16 +81,17 @@ As migrations do Supabase devem ser aplicadas através do fluxo versionado de mi
 ## Segurança
 
 - Não versionar `.env` nem chaves privadas.
-- A `SUPABASE_SERVICE_ROLE_KEY` é exclusivamente server-side.
+- A chave secreta/service-role do Supabase é exclusivamente server-side.
 - RLS deve permanecer habilitado nas tabelas expostas.
 - Ações críticas da corrida usam funções SQL protegidas em vez de permitir alterações arbitrárias de status pelo cliente.
+- Motoristas precisam estar aprovados/verificados para aceitar corridas.
 
 ## Próximas etapas
 
 1. Conectar o projeto a uma instância Supabase real.
 2. Validar e aplicar as migrations em ambiente de desenvolvimento.
-3. Completar API de autenticação e corridas.
-4. Implementar tempo real para ofertas e localização.
+3. Testar ponta a ponta cadastro → corrida → aceite → conclusão.
+4. Implementar tempo real completo para ofertas e localização.
 5. Integrar mapas/GPS e notificações push.
 6. Integrar pagamentos.
 7. Transformar a interface em aplicativos Android/iOS e painel administrativo.
@@ -85,4 +99,4 @@ As migrations do Supabase devem ser aplicadas através do fluxo versionado de mi
 
 ## Importante
 
-A estrutura real já está no repositório, mas **ainda não deve ser usada para operar corridas reais** até que o banco remoto, autenticação, mapas/GPS, pagamentos, notificações, testes e controles de produção sejam configurados e validados.
+A estrutura real e o fluxo inicial já estão no repositório, mas **ainda não deve ser usada para operar corridas reais** até que o banco remoto, autenticação, mapas/GPS, pagamentos, notificações, testes e controles de produção sejam configurados e validados.
