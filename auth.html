@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>King Driver — Acesso</title>
+  <style>body{font-family:Arial,sans-serif;max-width:460px;margin:40px auto;padding:20px}input,button,select{width:100%;padding:12px;margin:7px 0;box-sizing:border-box}button{cursor:pointer}.hidden{display:none}.msg{padding:10px;margin:10px 0;border-radius:6px;background:#f2f2f2}</style>
+</head>
+<body>
+  <h1>King Driver</h1>
+  <p>Entre ou crie sua conta.</p>
+  <div id="message" class="msg">Backend de autenticação ainda não configurado.</div>
+  <label>E-mail</label><input id="email" type="email" autocomplete="email">
+  <label>Senha</label><input id="password" type="password" autocomplete="current-password">
+  <label>Perfil</label><select id="role"><option value="passenger">Passageiro</option><option value="driver">Motorista</option></select>
+  <button id="signup">Criar conta</button><button id="login">Entrar</button>
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>
