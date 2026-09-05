@@ -2,55 +2,87 @@
 
 Plataforma de mobilidade urbana em desenvolvimento, com experiência separada para **Passageiro**, **Motorista** e **Proprietário/Administração**.
 
-## Status atual
+## Estado atual
 
-O repositório já contém uma demonstração web funcional do fluxo principal do King Driver. A demo é propositalmente independente de serviços externos e serve para validar a experiência e a navegação antes da integração com backend e aplicativos móveis.
+A demo web continua preservada, mas o repositório agora também contém a primeira camada da estrutura real do produto: schema PostgreSQL/Supabase versionado, autenticação por perfis, RLS, ciclo de vida de corridas, ofertas, localização, pagamentos, avaliações e um endpoint inicial de saúde da API.
 
-## Módulos planejados
-
-- 👤 Passageiro: cadastro/login, origem e destino, categoria, solicitação e acompanhamento da corrida.
-- 🚗 Motorista: cadastro, aprovação, disponibilidade, recebimento/aceite de corridas e ganhos.
-- 🏢 Proprietário/Admin: indicadores, gestão de usuários e motoristas, corridas e operação.
-- 📍 Localização: GPS, atualização de posição e acompanhamento da corrida.
-- 🔄 Corridas em tempo real: estados de solicitação, aceite, chegada, início, conclusão e cancelamento.
-- 💰 Valores: cálculo de estimativa, valor final, histórico e futura integração de pagamentos.
-- 🔐 Segurança: autenticação, autorização por perfil e proteção de dados.
-
-## Arquitetura alvo
+## Estrutura principal
 
 ```text
-Aplicativos móveis (Android / iOS)
-        │
-        ├── Passageiro
-        └── Motorista
-                │
-                ▼
-        API / Backend King Driver
-                │
-        ┌───────┼────────┐
-        ▼       ▼        ▼
-     Banco   Tempo real  Notificações
-        │
-        ▼
-   Painel Admin
+king-driver/
+├── api/
+│   └── health.js
+├── docs/
+│   └── ARQUITETURA.md
+├── js/
+│   ├── auth.js
+│   ├── config.js
+│   ├── king-driver.js
+│   └── ride.js
+├── supabase/
+│   ├── config.toml
+│   └── migrations/
+│       ├── 001_profiles.sql
+│       ├── 002_core_tables.sql
+│       ├── 002_profile_auth_trigger_and_permissions.sql
+│       └── 003_secure_ride_actions.sql
+├── auth.html
+├── index.html
+├── vercel.json
+└── .env.example
 ```
 
-A arquitetura será evoluída por etapas, mantendo a demonstração atual preservada para não interromper o projeto.
+## Banco de dados real
 
-## Próximas etapas técnicas
+O schema inclui:
 
-1. Estruturar os modelos de usuário, motorista, corrida e localização.
-2. Definir autenticação e permissões por perfil.
-3. Criar o contrato da API para corridas e usuários.
-4. Preparar comunicação em tempo real para atualização de corridas e localização.
-5. Preparar os aplicativos Android/iOS.
-6. Integrar mapas/GPS, notificações e pagamentos.
-7. Criar ambiente de produção, monitoramento e políticas de segurança.
+- `profiles` — identidade e papel do usuário.
+- `driver_profiles` — habilitação/status do motorista.
+- `vehicles` — veículos cadastrados.
+- `rides` — corridas e ciclo de vida.
+- `ride_offers` — ofertas para motoristas.
+- `driver_locations` — última posição do motorista.
+- `ride_events` — histórico de eventos.
+- `payments` — estado financeiro da corrida.
+- `ratings` — avaliações entre participantes.
+
+As tabelas expostas usam **Row Level Security (RLS)** e políticas por usuário/administrador. As mudanças do banco ficam versionadas em `supabase/migrations/`.
+
+## Fluxo da corrida
+
+```text
+requested → searching → accepted → arriving → in_progress → completed
+                         └──────────────→ cancelled
+```
+
+Também existem estados para `expired` e `disputed`.
+
+## API
+
+`api/health.js` fornece o primeiro endpoint de saúde para o backend hospedado. Os próximos endpoints serão adicionados por domínio, mantendo credenciais privadas exclusivamente no ambiente do servidor.
+
+## Desenvolvimento e deploy
+
+As migrations do Supabase devem ser aplicadas através do fluxo versionado de migrations. O projeto pode ser conectado a um ambiente Supabase e, posteriormente, automatizado com CI/CD.
+
+## Segurança
+
+- Não versionar `.env` nem chaves privadas.
+- A `SUPABASE_SERVICE_ROLE_KEY` é exclusivamente server-side.
+- RLS deve permanecer habilitado nas tabelas expostas.
+- Ações críticas da corrida usam funções SQL protegidas em vez de permitir alterações arbitrárias de status pelo cliente.
+
+## Próximas etapas
+
+1. Conectar o projeto a uma instância Supabase real.
+2. Validar e aplicar as migrations em ambiente de desenvolvimento.
+3. Completar API de autenticação e corridas.
+4. Implementar tempo real para ofertas e localização.
+5. Integrar mapas/GPS e notificações push.
+6. Integrar pagamentos.
+7. Transformar a interface em aplicativos Android/iOS e painel administrativo.
+8. Adicionar testes, observabilidade, antifraude e controles de produção.
 
 ## Importante
 
-Esta versão ainda é **protótipo/demonstração**. Não deve ser usada para operar corridas reais, armazenar dados sensíveis ou processar pagamentos até que o backend, autenticação, segurança, banco de dados e integrações de produção sejam implementados e testados.
-
-## Demonstração
-
-O arquivo `index.html` contém a demo web atual do projeto.
+A estrutura real já está no repositório, mas **ainda não deve ser usada para operar corridas reais** até que o banco remoto, autenticação, mapas/GPS, pagamentos, notificações, testes e controles de produção sejam configurados e validados.
