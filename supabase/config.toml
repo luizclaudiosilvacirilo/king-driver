@@ -1,0 +1,17 @@
+# King Driver Supabase local configuration.
+# Secrets and project-specific values belong in the local environment, not Git.
+project_id = "king-driver"
+
+[api]
+enabled = true
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
