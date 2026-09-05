@@ -1,0 +1,12 @@
+{
+  "name": "king-driver",
+  "version": "0.1.0",
+  "private": true,
+  "description": "King Driver - plataforma de mobilidade urbana",
+  "scripts": {
+    "test": "node --check api/health.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
