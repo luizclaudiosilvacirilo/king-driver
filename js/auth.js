@@ -2,8 +2,16 @@ import './config.js';
 
 const URL = window.KING_DRIVER_SUPABASE_URL;
 const KEY = window.KING_DRIVER_SUPABASE_PUBLISHABLE_KEY;
-const SITE_URL = 'https://king-driver.pages.dev';
-const REDIRECT_URL = `${SITE_URL}/auth.html`;
+
+// Build the callback from the URL the user is actually visiting.
+// This works on Vercel, Netlify, GitHub Pages (/king-driver/), and local hosting.
+function appBasePath() {
+  const path = window.location.pathname || '/';
+  const file = path.substring(path.lastIndexOf('/') + 1);
+  return file.includes('.') ? path.slice(0, path.lastIndexOf('/') + 1) : `${path.replace(/\/$/, '')}/`;
+}
+
+const REDIRECT_URL = `${window.location.origin}${appBasePath()}auth.html`;
 
 const $ = (id) => document.getElementById(id);
 const msg = $('message');
@@ -14,6 +22,17 @@ function setMessage(text) {
 
 function emailValue() {
   return $('email')?.value.trim().toLowerCase() || '';
+}
+
+function userIdFromToken(accessToken) {
+  if (!accessToken) return '';
+  try {
+    const part = accessToken.split('.')[1]?.replace(/-/g, '+').replace(/_/g, '/');
+    if (!part) return '';
+    return JSON.parse(atob(part)).sub || '';
+  } catch (_) {
+    return '';
+  }
 }
 
 async function request(path, options = {}) {
@@ -30,23 +49,41 @@ async function request(path, options = {}) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.msg || data.error_description || data.message || 'Falha na operação.');
+    throw new Error(data.msg || data.error_description || data.message || data.error || 'Falha na operação.');
   }
   return data;
 }
 
 async function finish(data, selectedRole = 'passenger') {
+  if (!data?.access_token) throw new Error('A sessão de acesso não foi recebida.');
   sessionStorage.setItem('king_driver_access_token', data.access_token);
   if (data.refresh_token) sessionStorage.setItem('king_driver_refresh_token', data.refresh_token);
   sessionStorage.setItem('king_driver_role', selectedRole);
   setMessage('Login realizado. Abrindo o King Driver...');
-  setTimeout(() => { location.href = selectedRole === 'admin' ? 'admin.html' : 'index.html'; }, 300);
+  setTimeout(() => { location.href = 'index.html'; }, 300);
+}
+
+async function roleForAccessToken(accessToken) {
+  const userId = userIdFromToken(accessToken);
+  if (!userId) return sessionStorage.getItem('king_driver_role') || 'passenger';
+
+  const profile = await request(
+    `/rest/v1/profiles?select=role,full_name&id=eq.${encodeURIComponent(userId)}&limit=1`,
+    { accessToken }
+  );
+  return profile[0]?.role || sessionStorage.getItem('king_driver_role') || 'passenger';
 }
 
 async function consumeRedirectSession() {
   const hash = new URLSearchParams(location.hash.replace(/^#/, '?'));
   const accessToken = hash.get('access_token');
   const type = hash.get('type');
+  const errorDescription = hash.get('error_description');
+
+  if (errorDescription) {
+    setMessage(decodeURIComponent(errorDescription.replace(/\+/g, ' ')));
+    return;
+  }
   if (!accessToken) return;
 
   history.replaceState(null, '', location.pathname + location.search);
@@ -57,9 +94,11 @@ async function consumeRedirectSession() {
 
   setMessage('E-mail confirmado. Entrando no King Driver...');
   try {
-    const profile = await request('/rest/v1/profiles?select=role&limit=1', { accessToken });
-    const role = profile[0]?.role || sessionStorage.getItem('king_driver_role') || 'passenger';
-    await finish({ access_token: accessToken, refresh_token: hash.get('refresh_token') || '' }, role);
+    const role = await roleForAccessToken(accessToken);
+    await finish({
+      access_token: accessToken,
+      refresh_token: hash.get('refresh_token') || '',
+    }, role);
   } catch (error) {
     setMessage(error.message || 'E-mail confirmado. Faça login para continuar.');
   }
@@ -144,8 +183,8 @@ $('login').onclick = async () => {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    const profile = await request(`/rest/v1/profiles?select=role,full_name&id=eq.${encodeURIComponent(data.user?.id || '')}`, { accessToken: data.access_token });
-    await finish(data, profile[0]?.role || $('role')?.value || 'passenger');
+    const role = await roleForAccessToken(data.access_token);
+    await finish(data, role);
   } catch (error) {
     setMessage(error.message || 'Não foi possível entrar.');
   }
