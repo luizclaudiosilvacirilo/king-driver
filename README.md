@@ -4,7 +4,7 @@ Plataforma de mobilidade urbana em desenvolvimento, com experiência separada pa
 
 ## Acesso público atual
 
-O site público oficial desta versão está publicado em **https://king-driver.netlify.app**.
+O site público de teste desta versão está publicado em **https://king-driver-app.netlify.app**.
 
 ## Estado atual
 
