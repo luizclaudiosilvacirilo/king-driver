@@ -3,8 +3,6 @@ import './config.js';
 const URL = window.KING_DRIVER_SUPABASE_URL;
 const KEY = window.KING_DRIVER_SUPABASE_PUBLISHABLE_KEY;
 
-// Build the callback from the URL the user is actually visiting.
-// This works on Vercel, Netlify, GitHub Pages (/king-driver/), and local hosting.
 function appBasePath() {
   const path = window.location.pathname || '/';
   const file = path.substring(path.lastIndexOf('/') + 1);
@@ -12,7 +10,6 @@ function appBasePath() {
 }
 
 const REDIRECT_URL = `${window.location.origin}${appBasePath()}auth.html`;
-
 const $ = (id) => document.getElementById(id);
 const msg = $('message');
 
@@ -49,9 +46,27 @@ async function request(path, options = {}) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.msg || data.error_description || data.message || data.error || 'Falha na operação.');
+    const message = data.msg || data.error_description || data.message || data.error || 'Falha na operação.';
+    const error = new Error(message);
+    error.status = response.status;
+    error.code = data.error_code || data.code || '';
+    throw error;
   }
   return data;
+}
+
+function explainAuthError(error, fallback) {
+  const text = String(error?.message || '').toLowerCase();
+  if (error?.status === 429 || text.includes('rate limit') || text.includes('too many')) {
+    return 'Limite temporário de envio atingido. Aguarde alguns minutos antes de tentar novamente.';
+  }
+  if (text.includes('email not confirmed')) {
+    return 'Este e-mail ainda não foi confirmado. Use o botão de reenviar confirmação.';
+  }
+  if (text.includes('redirect') || text.includes('redirect_to')) {
+    return 'O endereço de retorno do King Driver não está autorizado no Supabase. A configuração precisa ser corrigida no projeto.';
+  }
+  return error?.message || fallback;
 }
 
 async function finish(data, selectedRole = 'passenger') {
@@ -95,12 +110,9 @@ async function consumeRedirectSession() {
   setMessage('E-mail confirmado. Entrando no King Driver...');
   try {
     const role = await roleForAccessToken(accessToken);
-    await finish({
-      access_token: accessToken,
-      refresh_token: hash.get('refresh_token') || '',
-    }, role);
+    await finish({ access_token: accessToken, refresh_token: hash.get('refresh_token') || '' }, role);
   } catch (error) {
-    setMessage(error.message || 'E-mail confirmado. Faça login para continuar.');
+    setMessage(explainAuthError(error, 'E-mail confirmado. Faça login para continuar.'));
   }
 }
 
@@ -111,7 +123,7 @@ async function sendMagicLink() {
   const selectedRole = $('role')?.value || 'passenger';
   if (!email) throw new Error('Informe seu e-mail.');
 
-  setMessage(`Enviando link de autorização para ${email}...`);
+  setMessage(`Solicitando autorização por e-mail para ${email}...`);
   await request(`/auth/v1/otp?redirect_to=${encodeURIComponent(REDIRECT_URL)}`, {
     method: 'POST',
     body: JSON.stringify({
@@ -126,7 +138,7 @@ async function sendMagicLink() {
     $('resend').hidden = false;
     $('resend').dataset.email = email;
   }
-  setMessage(`E-mail enviado para ${email}. Verifique Entrada, Spam e Promoções.`);
+  setMessage(`Solicitação registrada para ${email}. Se a mensagem não aparecer em alguns minutos, verifique Spam/Promoções e use Reenviar uma única vez.`);
 }
 
 $('signup').onclick = async () => {
@@ -155,21 +167,26 @@ $('signup').onclick = async () => {
       $('resend').hidden = false;
       $('resend').dataset.email = email;
     }
-    setMessage(`E-mail enviado para ${email}. Verifique Entrada, Spam e Promoções.`);
+    setMessage(`Conta criada para ${email}. Aguardando confirmação por e-mail.`);
   } catch (error) {
-    setMessage(error.message || 'Não foi possível criar a conta.');
+    setMessage(explainAuthError(error, 'Não foi possível criar a conta.'));
   }
 };
 
 $('resend').onclick = async () => {
-  try { await sendMagicLink(); }
-  catch (error) { setMessage(error.message || 'Não foi possível reenviar o e-mail.'); }
+  try {
+    const savedEmail = $('resend').dataset.email || emailValue();
+    if (savedEmail && !$('email').value) $('email').value = savedEmail;
+    await sendMagicLink();
+  } catch (error) {
+    setMessage(explainAuthError(error, 'Não foi possível reenviar o e-mail.'));
+  }
 };
 
 if ($('magic_link')) {
   $('magic_link').onclick = async () => {
     try { await sendMagicLink(); }
-    catch (error) { setMessage(error.message || 'Não foi possível enviar o link de autorização.'); }
+    catch (error) { setMessage(explainAuthError(error, 'Não foi possível solicitar o link de autorização.')); }
   };
 }
 
@@ -186,7 +203,7 @@ $('login').onclick = async () => {
     const role = await roleForAccessToken(data.access_token);
     await finish(data, role);
   } catch (error) {
-    setMessage(error.message || 'Não foi possível entrar.');
+    setMessage(explainAuthError(error, 'Não foi possível entrar.'));
   }
 };
 
