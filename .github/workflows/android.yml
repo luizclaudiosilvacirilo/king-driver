@@ -2,7 +2,10 @@ name: Build King Drive Sabará APK
 on:
   push:
     branches: [ main ]
+    paths-ignore: [ 'KingDrive-Sabara.apk.b64' ]
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,8 +23,17 @@ jobs:
           gradle-version: '8.9'
       - name: Build APK
         run: gradle --no-daemon assembleDebug
-      - name: Publish APK
+      - name: Publish APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: KingDrive-Sabara-APK
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish APK as repository file
+        shell: bash
+        run: |
+          base64 -w0 app/build/outputs/apk/debug/app-debug.apk > KingDrive-Sabara.apk.b64
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add KingDrive-Sabara.apk.b64
+          git commit -m "Publish King Drive Sabará APK" || true
+          git push
