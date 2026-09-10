@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private static final int LOCATION_REQUEST = 1001;
-    private static final String APP_URL = "https://king-driver.netlify.app/";
     private WebView web;
     private GeolocationPermissions.Callback geoCallback;
     private String geoOrigin;
@@ -35,10 +34,12 @@ public class MainActivity extends Activity {
         s.setAllowContentAccess(true);
         s.setBuiltInZoomControls(false);
         s.setDisplayZoomControls(false);
+        s.setLoadWithOverviewMode(false);
+        s.setUseWideViewPort(false);
         web.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) { return false; }
             @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                if (request.isForMainFrame()) Toast.makeText(MainActivity.this, "Não foi possível conectar ao King Driver. Verifique a internet.", Toast.LENGTH_LONG).show();
+                if (request.isForMainFrame()) Toast.makeText(MainActivity.this, "Não foi possível carregar o King Driver. Verifique a internet.", Toast.LENGTH_LONG).show();
             }
         });
         web.setWebChromeClient(new WebChromeClient() {
@@ -48,7 +49,7 @@ public class MainActivity extends Activity {
             }
         });
         setContentView(web);
-        web.loadUrl(APP_URL);
+        web.loadUrl("file:///android_asset/index.html");
     }
 
     private boolean hasLocationPermission() {
