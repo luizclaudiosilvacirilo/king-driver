@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
             }
         });
         setContentView(web);
-        web.loadUrl("file:///android_asset/index.html");
+        web.loadUrl("file:///android_asset/index-sms.html");
     }
 
     private boolean hasLocationPermission() {
