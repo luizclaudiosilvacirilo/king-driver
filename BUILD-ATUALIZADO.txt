@@ -1,0 +1,5 @@
+King Driver Sabará — build atualizado
+
+Versão do aplicativo: 1.2
+Status: sem texto de versão demonstrativa/teste na interface Android.
+Build gerado pelo GitHub Actions.
