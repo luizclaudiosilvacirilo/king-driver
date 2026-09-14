@@ -1,0 +1,1 @@
+King Driver web entry is index.html. Authentication returns to index.html for passenger/driver and admin.html for admin.
