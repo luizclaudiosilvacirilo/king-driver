@@ -34,8 +34,6 @@ public class MainActivity extends Activity {
         s.setAllowContentAccess(true);
         s.setBuiltInZoomControls(false);
         s.setDisplayZoomControls(false);
-        s.setLoadWithOverviewMode(false);
-        s.setUseWideViewPort(false);
         web.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) { return false; }
             @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
@@ -49,7 +47,7 @@ public class MainActivity extends Activity {
             }
         });
         setContentView(web);
-        web.loadUrl("file:///android_asset/index-sms.html");
+        web.loadUrl("https://king-driver.pages.dev/auth.html");
     }
 
     private boolean hasLocationPermission() {
