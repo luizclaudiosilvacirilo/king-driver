@@ -138,7 +138,21 @@ async function sendMagicLink() {
     $('resend').hidden = false;
     $('resend').dataset.email = email;
   }
-  setMessage(`Solicitação registrada para ${email}. Se a mensagem não aparecer em alguns minutos, verifique Spam/Promoções e use Reenviar uma única vez.`);
+  setMessage(`Link de acesso enviado para ${email}. Verifique Entrada, Spam e Promoções.`);
+}
+
+async function resendSignupConfirmation() {
+  const email = $('resend')?.dataset.email || emailValue();
+  if (!email) throw new Error('Informe o e-mail usado no cadastro.');
+
+  setMessage(`Reenviando confirmação para ${email}...`);
+  await request('/auth/v1/resend', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'signup', email }),
+  });
+
+  if ($('resend')) $('resend').dataset.email = email;
+  setMessage(`Confirmação reenviada para ${email}. Verifique Entrada, Spam e Promoções.`);
 }
 
 $('signup').onclick = async () => {
@@ -167,7 +181,7 @@ $('signup').onclick = async () => {
       $('resend').hidden = false;
       $('resend').dataset.email = email;
     }
-    setMessage(`Conta criada para ${email}. Aguardando confirmação por e-mail.`);
+    setMessage(`Conta criada para ${email}. Enviamos um e-mail de confirmação. Verifique Entrada, Spam e Promoções.`);
   } catch (error) {
     setMessage(explainAuthError(error, 'Não foi possível criar a conta.'));
   }
@@ -177,9 +191,9 @@ $('resend').onclick = async () => {
   try {
     const savedEmail = $('resend').dataset.email || emailValue();
     if (savedEmail && !$('email').value) $('email').value = savedEmail;
-    await sendMagicLink();
+    await resendSignupConfirmation();
   } catch (error) {
-    setMessage(explainAuthError(error, 'Não foi possível reenviar o e-mail.'));
+    setMessage(explainAuthError(error, 'Não foi possível reenviar o e-mail de confirmação.'));
   }
 };
 
