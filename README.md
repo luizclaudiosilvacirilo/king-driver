@@ -11,3 +11,7 @@ Aplicativo de mobilidade urbana para Sabará/MG, com acesso para passageiros e m
 ## Repositório
 
 https://github.com/luizclaudiosilvacirilo/king-driver
+
+## Build
+
+Compilação Android automática pelo GitHub Actions.
