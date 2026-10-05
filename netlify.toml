@@ -2,6 +2,11 @@
   publish = "."
 
 [[redirects]]
+  from = "/qr"
+  to = "/qr.html"
+  status = 200
+
+[[redirects]]
   from = "/cadastro"
   to = "/auth.html"
   status = 200
