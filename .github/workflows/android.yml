@@ -1,7 +1,7 @@
 name: Build King Drive Sabará APK
 on:
   push:
-    branches: [ main ]
+    branches: [ main, lc-finances-apk ]
     paths-ignore: [ 'KingDrive-Sabara.apk.b64', 'KingDrive-Sabara.apk.part-*' ]
   workflow_dispatch:
 permissions:
