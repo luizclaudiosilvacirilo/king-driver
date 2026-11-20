@@ -1,72 +1,54 @@
 package br.com.kingdrive.sabara;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebSettings;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-    private static final int LOCATION_REQUEST = 1001;
     private WebView web;
-    private GeolocationPermissions.Callback geoCallback;
-    private String geoOrigin;
+    private static final String APP_URL = "https://fp-emprestimos-zrw4ys.v2.appdeploy.ai/";
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
-        requestLocationIfNeeded();
         web = new WebView(this);
-        web.setBackgroundColor(Color.rgb(17,17,17));
-        WebSettings s = web.getSettings();
-        s.setJavaScriptEnabled(true);
-        s.setDomStorageEnabled(true);
-        s.setDatabaseEnabled(true);
-        s.setGeolocationEnabled(true);
-        s.setAllowFileAccess(true);
-        s.setAllowContentAccess(true);
-        s.setBuiltInZoomControls(false);
-        s.setDisplayZoomControls(false);
+        WebSettings settings = web.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(false);
+        settings.setSupportMultipleWindows(false);
+        settings.setAllowFileAccess(false);
+        settings.setAllowContentAccess(true);
         web.setWebViewClient(new WebViewClient() {
-            @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) { return false; }
-            @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                if (request.isForMainFrame()) Toast.makeText(MainActivity.this, "Não foi possível carregar o King Driver. Verifique a internet.", Toast.LENGTH_LONG).show();
+            @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                return !url.startsWith("https://fp-emprestimos-zrw4ys.v2.appdeploy.ai/");
+            }
+            @Override public void onReceivedError(WebView view, WebResourceRequest request, android.webkit.WebResourceError error) {
+                if (request.isForMainFrame()) Toast.makeText(MainActivity.this, "Falha ao abrir o LC Finances. Verifique sua conexão.", Toast.LENGTH_LONG).show();
             }
         });
-        web.setWebChromeClient(new WebChromeClient() {
-            @Override public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
-                geoOrigin = origin; geoCallback = callback;
-                if (hasLocationPermission()) callback.invoke(origin, true, false); else requestLocationIfNeeded();
-            }
-        });
+        web.setWebChromeClient(new WebChromeClient());
         setContentView(web);
-        web.loadUrl("https://king-driver.pages.dev/auth.html");
+        if (state == null) web.loadUrl(APP_URL); else web.restoreState(state);
     }
 
-    private boolean hasLocationPermission() {
-        return android.os.Build.VERSION.SDK_INT < 23 ||
-            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-            checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    @Override protected void onSaveInstanceState(Bundle outState) {
+        if (web != null) web.saveState(outState);
+        super.onSaveInstanceState(outState);
     }
 
-    private void requestLocationIfNeeded() {
-        if (android.os.Build.VERSION.SDK_INT >= 23 && !hasLocationPermission())
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST);
+    @Override public void onBackPressed() {
+        if (web != null && web.canGoBack()) web.goBack(); else super.onBackPressed();
     }
 
-    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_REQUEST && geoCallback != null && geoOrigin != null) {
-            geoCallback.invoke(geoOrigin, hasLocationPermission(), false); geoCallback = null; geoOrigin = null;
-        }
+    @Override protected void onDestroy() {
+        if (web != null) { web.destroy(); web = null; }
+        super.onDestroy();
     }
-
-    @Override public void onBackPressed() { if (web != null && web.canGoBack()) web.goBack(); else super.onBackPressed(); }
 }
