@@ -5,11 +5,11 @@ android {
     compileSdk 35
 
     defaultConfig {
-        applicationId 'br.com.lcfinances.app'
+        applicationId 'br.com.lcfinances.app.novo'
         minSdk 23
-        targetSdk 35
-        versionCode 12
-        versionName '1.2.0'
+        targetSdk 32
+        versionCode 13
+        versionName '1.2.1'
     }
 
     compileOptions {
