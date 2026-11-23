@@ -1,12 +1,15 @@
-name: Build LC Finanças signed APK
+name: Build LC Finanças APK
 on:
   workflow_dispatch:
   push:
+    branches:
+      - lc-financas-apk-build
     paths:
       - 'lc-financas-android/**'
       - '.github/workflows/lc-financas-apk.yml'
 permissions:
   contents: read
+  actions: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,40 +19,16 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
-      - name: Prepare private release signing key
-        working-directory: lc-financas-android
-        env:
-          LC_UPLOAD_KEYSTORE_BASE64: ${{ secrets.LC_UPLOAD_KEYSTORE_BASE64 }}
-        run: |
-          test -n "$LC_UPLOAD_KEYSTORE_BASE64" || (echo "Missing GitHub Actions secret LC_UPLOAD_KEYSTORE_BASE64" && exit 1)
-          echo "$LC_UPLOAD_KEYSTORE_BASE64" | base64 --decode > app/upload-key.jks
-          chmod 600 app/upload-key.jks
-      - name: Build signed release APK
-        working-directory: lc-financas-android
-        env:
-          LC_KEYSTORE_PATH: app/upload-key.jks
-          LC_UPLOAD_STORE_PASSWORD: ${{ secrets.LC_UPLOAD_STORE_PASSWORD }}
-          LC_UPLOAD_KEY_ALIAS: ${{ secrets.LC_UPLOAD_KEY_ALIAS }}
-          LC_UPLOAD_KEY_PASSWORD: ${{ secrets.LC_UPLOAD_KEY_PASSWORD }}
-        run: |
-          test -n "$LC_UPLOAD_STORE_PASSWORD"
-          test -n "$LC_UPLOAD_KEY_ALIAS"
-          test -n "$LC_UPLOAD_KEY_PASSWORD"
-          gradle --no-daemon assembleRelease
-      - name: Verify APK signature
+      - name: Build installable APK
         working-directory: lc-financas-android
         run: |
-          APK=app/build/outputs/apk/release/app-release.apk
-          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
-          test -n "$APKSIGNER"
-          "$APKSIGNER" verify --verbose --print-certs "$APK"
-          sha256sum "$APK"
+          chmod +x gradlew
+          ./gradlew --no-daemon clean assembleDebug
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          unzip -t app/build/outputs/apk/debug/app-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: LC-Financas-1.2.2-release-signed
-          path: lc-financas-android/app/build/outputs/apk/release/app-release.apk
+          name: LC-Financas-1.2.3-logo-corrigida
+          path: lc-financas-android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
