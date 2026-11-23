@@ -5,11 +5,33 @@ android {
     compileSdk 35
 
     defaultConfig {
+        // Separate package avoids signature conflicts with the previous installation.
         applicationId 'br.com.lcfinances.app.novo'
         minSdk 23
-        targetSdk 32
-        versionCode 13
-        versionName '1.2.1'
+        targetSdk 35
+        versionCode 14
+        versionName '1.2.2'
+    }
+
+    signingConfigs {
+        release {
+            def ks = System.getenv('LC_KEYSTORE_PATH')
+            storeFile file(ks ?: 'upload-key.jks')
+            storePassword System.getenv('LC_UPLOAD_STORE_PASSWORD')
+            keyAlias System.getenv('LC_UPLOAD_KEY_ALIAS')
+            keyPassword System.getenv('LC_UPLOAD_KEY_PASSWORD')
+        }
+    }
+
+    buildTypes {
+        debug {
+            // Debug build retained for developer diagnostics only.
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+        }
     }
 
     compileOptions {
