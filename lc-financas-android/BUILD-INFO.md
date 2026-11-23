@@ -1,0 +1,1 @@
+LC Finanças Android build project. This directory is isolated from the King Driver application. Build output is produced by GitHub Actions as an installable debug APK.
