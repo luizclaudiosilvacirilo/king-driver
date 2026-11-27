@@ -11,8 +11,8 @@ android {
         applicationId = "br.com.lcfabrica.apps"
         minSdk = 23
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.2.2"
+        versionCode = 5
+        versionName = "1.2.3"
     }
 
     buildTypes {
@@ -20,7 +20,6 @@ android {
             isMinifyEnabled = false
         }
         debug {
-            applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
     }
