@@ -41,12 +41,16 @@ jobs:
         shell: bash
         run: |
           APK="lc-fabrica-android/app/build/outputs/apk/debug/app-debug.apk"
+          AAPT="$ANDROID_HOME/build-tools/35.0.0/aapt"
+          ZIPALIGN="$ANDROID_HOME/build-tools/35.0.0/zipalign"
+          APKSIGNER="$ANDROID_HOME/build-tools/35.0.0/apksigner"
           test -s "$APK"
-          "$ANDROID_HOME/build-tools/35.0.0/ aapt" version
-          "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" manifest application-id "$APK" | grep -Fx "br.com.lcfabrica.apps"
-          "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" manifest version-name "$APK" | grep -Fx "1.2.3-debug"
-          "$ANDROID_HOME/build-tools/35.0.0/zipalign" -c -v 4 "$APK"
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          "$AAPT" version
+          BADGING="$("$AAPT" dump badging "$APK")"
+          echo "$BADGING" | grep -F "package: name='br.com.lcfabrica.apps'"
+          echo "$BADGING" | grep -F "versionName='1.2.3-debug'"
+          "$ZIPALIGN" -c -v 4 "$APK"
+          "$APKSIGNER" verify --verbose "$APK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
