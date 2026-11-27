@@ -20,14 +20,16 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build debug APK
-        run: gradle --no-daemon assembleDebug
-      - name: Verify APK exists
-        run: test -s app/build/outputs/apk/debug/app-debug.apk
+      - name: Build LC Fabrica Android project
+        run: gradle -p lc-fabrica-android --no-daemon assembleDebug
+      - name: Verify APK identity and output
+        run: |
+          test -s lc-fabrica-android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -t lc-fabrica-android/app/build/outputs/apk/debug/app-debug.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: LC-Fabrica-de-Apps-1.2.1-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: lc-fabrica-android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
