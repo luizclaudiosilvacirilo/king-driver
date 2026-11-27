@@ -1,12 +1,11 @@
 package br.com.lcfabrica.apps
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.OnBackPressedCallback
-import android.app.Activity
 
 class MainActivity : Activity() {
     private lateinit var webView: WebView
@@ -30,21 +29,24 @@ class MainActivity : Activity() {
         } else {
             webView.restoreState(savedInstanceState)
         }
+    }
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (webView.canGoBack()) webView.goBack() else finish()
-            }
-        })
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (::webView.isInitialized && webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        webView.saveState(outState)
+        if (::webView.isInitialized) webView.saveState(outState)
         super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
-        webView.destroy()
+        if (::webView.isInitialized) webView.destroy()
         super.onDestroy()
     }
 
