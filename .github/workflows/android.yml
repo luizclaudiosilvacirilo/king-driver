@@ -52,11 +52,11 @@ jobs:
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" sign --ks "$RUNNER_TEMP/lc-test-signing.jks" --ks-key-alias lc-test --ks-pass pass:testonly123 --key-pass pass:testonly123 --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --out "$SIGNED" "$RUNNER_TEMP/aligned.apk"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$SIGNED"
           unzip -t "$SIGNED"
-          cp "$SIGNED" "$RUNNER_TEMP/LC-Fabrica-de-Apps-1.2.5-test.apk"
+          cp "$SIGNED" "$RUNNER_TEMP/LC-Fabrica-de-Apps-1.2.6-test.apk"
       - name: Upload signed APK
         uses: actions/upload-artifact@v4
         with:
           name: LC-Fabrica-de-Apps-1.2.6-test-signed
-          path: ${{ runner.temp }}/LC-Fabrica-de-Apps-1.2.5-test.apk
+          path: ${{ runner.temp }}/LC-Fabrica-de-Apps-1.2.6-test.apk
           if-no-files-found: error
           retention-days: 30
