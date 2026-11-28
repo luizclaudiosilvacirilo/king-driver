@@ -8,11 +8,17 @@ android {
     compileSdk 35
 
     defaultConfig {
-        applicationId 'br.com.lcfabrica.apps'
+        // ID novo para permitir instalação limpa, sem conflito com APKs de testes
+        // anteriores assinados por chaves temporárias diferentes.
+        applicationId 'br.com.lcfabrica.apps.instalacao126'
         minSdk 23
         targetSdk 35
-        versionCode 6
-        versionName '1.2.6'
+        versionCode 7
+        versionName '1.2.7'
+    }
+
+    buildTypes {
+        release { minifyEnabled false }
     }
 
     compileOptions {
