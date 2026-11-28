@@ -34,6 +34,7 @@ jobs:
           test -s "$APK"
           unzip -t "$APK"
           BADGING="$($ANDROID_HOME/build-tools/35.0.0/aapt dump badging "$APK")"
+          echo "$BADGING"
           echo "$BADGING" | grep -F "package: name='br.com.lcfabrica.apps.instalacao126'"
           echo "$BADGING" | grep -F "versionName='1.2.7'"
           echo "$BADGING" | grep -F "application-label:'LC Fábrica de Apps'"
